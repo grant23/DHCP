@@ -8,46 +8,31 @@ serverPort = 68
 
 class DHCP_server(object):
 	def server(self):
-		print("DHCP server is starting.")
+		print("DHCP server is running.")
+		print("_________________________________________________")
 		dest = (Dest, serverPort)		
 		sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 		sock.bind(('', clientPort))
 
-		while True:
-			try:
-				print('\nwaite DHCPDISCOVER')
-				data, address = sock.recvfrom(MAX_BYTES)
-				print('\nreceive DHCPDISCOVER')
-				print(data)
-		
-				print('\nsend DHCPOFFER')
-				data = DHCP_server.dhcpoffer()
-				sock.sendto(data, dest)
-		
-				while True:
-					try:
-						print('\nwaiting DHCPREQUEST')
-						data, address = sock.recvfrom(MAX_BYTES)
-						print('\nreciving DHCPREQUEST')
-						print(data)
-						
-						print('\nsending DHCPACK')
-						data = DHCP_server.dhcpack()
-						sock.sendto(data, dest)
-				
-						break
-					
-					except (KeyboardInterrupt, SystemExit):
-						raise
-					except:
-						traceback.print_exc()				
-				break				
-			except (KeyboardInterrupt, SystemExit):
-				raise
-			except:
-				traceback.print_exc()
+		print('\nwait for DHCPDISCOVER')
+		data, address = sock.recvfrom(MAX_BYTES)
+		print('\nreceive DHCPDISCOVER')
+		print(data)				
+		print('\nsend DHCPOFFER')
+		data = DHCP_server.dhcpoffer()
+		sock.sendto(data, dest)
+
+		print("_________________________________________________")
+		print('\nwait for  DHCPREQUEST')
+		data, address = sock.recvfrom(MAX_BYTES)
+		print('\nrecive DHCPREQUEST')
+		print(data)						
+		print('\nsend DHCPACK')
+		data = DHCP_server.dhcpack()
+		sock.sendto(data, dest)
+			
 	
 	def dhcpoffer():		
 		OP = bytes([0x02])
@@ -72,8 +57,9 @@ class DHCP_server(object):
 		DHCPOptions3 = bytes([3 , 4 , 0xC0, 0xA8, 0x01, 0x01])
 		DHCPOptions4 = bytes([51 , 4 , 0x00, 0x01, 0x51, 0x80])
 		DHCPOptions5 = bytes([54 , 4 , 0xC0, 0xA8, 0x01, 0x01])
+		End = bytes([0xff])
 		
-		package = OP + HTYPE + HLEN + HOPS + XID + SECS + FLAGS + CIADDR +YIADDR + SIADDR + GIADDR + CHADDR1 + CHADDR2 + CHADDR3 + CHADDR4 + CHADDR5 + Magiccookie + DHCPOptions1 + DHCPOptions2 + DHCPOptions3 + DHCPOptions4 + DHCPOptions5
+		package = OP + HTYPE + HLEN + HOPS + XID + SECS + FLAGS + CIADDR +YIADDR + SIADDR + GIADDR + CHADDR1 + CHADDR2 + CHADDR3 + CHADDR4 + CHADDR5 + Magiccookie + DHCPOptions1 + DHCPOptions2 + DHCPOptions3 + DHCPOptions4 + DHCPOptions5 + End
 	
 		return package
 	
@@ -100,8 +86,9 @@ class DHCP_server(object):
 		DHCPOptions3 = bytes([3 , 4 , 0xC0, 0xA8, 0x01, 0x01])
 		DHCPOptions4 = bytes([51 , 4 , 0x00, 0x01, 0x51, 0x80])
 		DHCPOptions5 = bytes([54 , 4 , 0xC0, 0xA8, 0x01, 0x01])
+		End = bytes([0xff])
 		
-		package = OP + HTYPE + HLEN + HOPS + XID + SECS + FLAGS + CIADDR +YIADDR + SIADDR + GIADDR + CHADDR1 + CHADDR2 + CHADDR3 + CHADDR4 + CHADDR5 + Magiccookie + DHCPOptions1 + DHCPOptions2 + DHCPOptions3 + DHCPOptions4 + DHCPOptions5
+		package = OP + HTYPE + HLEN + HOPS + XID + SECS + FLAGS + CIADDR +YIADDR + SIADDR + GIADDR + CHADDR1 + CHADDR2 + CHADDR3 + CHADDR4 + CHADDR5 + Magiccookie + DHCPOptions1 + DHCPOptions2 + DHCPOptions3 + DHCPOptions4 + DHCPOptions5 + End
 	
 		return package
 	

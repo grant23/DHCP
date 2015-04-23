@@ -11,7 +11,8 @@ class DHCP_client(object):
 
 	def client(self):
 
-		print("DHCP client is starting.")
+		print("DHCP client is running.")
+		print("_________________________________________________")
 		dest = (Dest, clientPort)
 
 		sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -19,31 +20,24 @@ class DHCP_client(object):
 		sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 		sock.bind((Src, serverPort))
 
-		print("\nsending DHCPDISCOVER")
-		#text = "UDP Src=" + Src + " sPort="+ str(serverPort) +" Dest=" + Dest + " dPort=" + str(clientPort)
-		#data = text.encode('ascii')
+		print("\nsend DHCPDISCOVER")
 		data = DHCP_client.dhcpdiscover()
 		sock.sendto(data, dest)
-		print("\nwaiting DHCPOFFER")
+		print("\nwait for DHCPOFFER")
 
 
 		data, address = sock.recvfrom(MAX_BYTES)
 		print("\nreceive DHCPOFFER")
-		#text = data.decode('ascii')
-		#print(text)
 		print(data)
+		print("_________________________________________________")
 
 		print("\nsend DHCPREQUEST")
-		#text = "UDP Src=0.0.0.0 sPort=68 Dest=255.255.255.255 dPort=67"
-		#data = text.encode('ascii')
 		data = DHCP_client.dhcprequest()
 		sock.sendto(data, dest)
-		print("\nwaiting DHCPACK")
+		print("\nwait for DHCPACK")
 	
 		data, address = sock.recvfrom(MAX_BYTES)
 		print("\nreceive DHCPACK")
-		#text = data.decode('ascii')
-		#print(text)
 		print(data)
 		
 	def dhcpdiscover():		
@@ -66,8 +60,9 @@ class DHCP_client(object):
 		MagicCookie = bytes([0x63, 0x82, 0x53, 0x63])
 		DHCPOptions1 = bytes([53 , 1 , 1])
 		DHCPOptions2 = bytes([50 , 4 , 0xC0, 0xA8, 0x01, 0x64])
+		End = bytes([0xff])
 		
-		package = OP + HTYPE + HLEN + HOPS + XID + SECS + FLAGS + CIADDR +YIADDR + SIADDR + GIADDR + CHADDR1 + CHADDR2 + CHADDR3 + CHADDR4 + CHADDR5 + MagicCookie + DHCPOptions1 + DHCPOptions2
+		package = OP + HTYPE + HLEN + HOPS + XID + SECS + FLAGS + CIADDR +YIADDR + SIADDR + GIADDR + CHADDR1 + CHADDR2 + CHADDR3 + CHADDR4 + CHADDR5 + MagicCookie + DHCPOptions1 + DHCPOptions2 + End
 	
 		return package
 		
@@ -92,8 +87,9 @@ class DHCP_client(object):
 		DHCPOptions1 = bytes([53 , 1 , 3])
 		DHCPOptions2 = bytes([50 , 4 , 0xC0, 0xA8, 0x01, 0x64])
 		DHCPOptions3 = bytes([54 , 4 , 0xC0, 0xA8, 0x01, 0x01])
+		End = bytes([0xff])
 		
-		package = OP + HTYPE + HLEN + HOPS + XID + SECS + FLAGS + CIADDR +YIADDR + SIADDR + GIADDR + CHADDR1 + CHADDR2 + CHADDR3 + CHADDR4 + CHADDR5 + MagicCookie + DHCPOptions1 + DHCPOptions2 +  DHCPOptions3
+		package = OP + HTYPE + HLEN + HOPS + XID + SECS + FLAGS + CIADDR +YIADDR + SIADDR + GIADDR + CHADDR1 + CHADDR2 + CHADDR3 + CHADDR4 + CHADDR5 + MagicCookie + DHCPOptions1 + DHCPOptions2 +  DHCPOptions3 + End
 	
 		return package
 	
